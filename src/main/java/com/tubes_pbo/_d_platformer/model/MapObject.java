@@ -2,7 +2,6 @@ package com.tubes_pbo._d_platformer.model;
 
 import java.awt.Rectangle;
 
-import com.tubes_pbo._d_platformer.main.GamePanel;
 import com.tubes_pbo._d_platformer.tilemap.Tile;
 import com.tubes_pbo._d_platformer.tilemap.TileMap;
 
