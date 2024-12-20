@@ -252,14 +252,322 @@ public class Player extends MapObject{
     }
 
     public void hit(int damage) {
+        if (flinching)
+            return;
 
+        stop();
+        health -= damage;
+        if (health < 0)
+            health = 0;
+        flinching = true;
+        flinchCount = 0;
+        if (facingRight)
+            dx = -1;
+        else
+            dx = 1;
+        dy = -3;
+        knockback = true;
+        falling = true;
+        jumping = false;
     }
 
     public void reset() {
+        health = maxHealth;
+        facingRight = true;
+        currentAction = -1;
+        stop();
     }
 
     public void stop() {
+        left = right = up = down = flinching = dashing = jumping = attacking = upattacking = charging = false;
     }
 
+    public void getNextPosition() {
 
+        if (knockback) {
+            dy += fallSpeed * 2;
+            knockback = !falling;
+            return;
+        }
+
+        movement();
+
+        jumpAndFall();
+
+    }
+
+    private void jumpAndFall() {
+        // jumping
+        if (jumping && !falling) {
+            dy = jumpStart;
+            falling = true;
+            JukeBox.play(PLAYERJUMP_MUSIC_NAME);
+        }
+
+        if (doubleJump) {
+            dy = doubleJumpStart;
+            alreadyDoubleJump = true;
+            doubleJump = false;
+            JukeBox.play(PLAYERJUMP_MUSIC_NAME);
+            for (int i = 0; i < 6; i++) {
+                energyParticles.add(new EnergyParticle(tileMap, x, y + cheight / 4.0, EnergyParticle.ENERGY_DOWN));
+            }
+        }
+
+        if (!falling)
+            alreadyDoubleJump = false;
+
+        // falling
+        if (falling) {
+            dy += fallSpeed;
+            if (dy < 0 && !jumping)
+                dy += stopJumpSpeed;
+            if (dy > maxFallSpeed)
+                dy = maxFallSpeed;
+        }
+    }
+
+    private void movement() {
+        double maxSpeed = this.maxSpeed;
+        if (dashing)
+            maxSpeed *= 1.75;
+
+        // movement
+        if (left) {
+            dx = Math.max(-maxSpeed, dx - moveSpeed);
+        } else if (right) {
+            dx = Math.min(maxSpeed, dx + moveSpeed);
+        } else {
+            if (dx >= 0) {
+                dx = Math.max(0, dx - stopSpeed);
+            } else {
+                dx = Math.min(0, dx + stopSpeed);
+            }
+        }
+
+        // cannot move while attacking, except in air
+        if ((attacking || upattacking || charging) && !(jumping || falling)) {
+            dx = 0;
+        }
+
+        // charging
+        if (charging) {
+            chargingTick++;
+            if (facingRight)
+                dx = moveSpeed * (3 - chargingTick * 0.07);
+            else
+                dx = -moveSpeed * (3 - chargingTick * 0.07);
+        }
+    }
+
+    private void setAnimation(int i) {
+        if (currentAction != i) {
+            currentAction = i;
+            animation.setFrames(sprites.get(currentAction));
+            animation.setDelay(SPRITEDELAYS[currentAction]);
+            width = FRAMEWIDTHS[currentAction];
+            height = FRAMEHEIGHTS[currentAction];
+        }
+    }
+
+    public void update() {
+
+        time++;
+
+        // check teleporting
+        if (teleporting) {
+            energyParticles.add(new EnergyParticle(tileMap, x, y, EnergyParticle.ENERGY_UP));
+        }
+
+        // update position
+        boolean isFalling = falling;
+        getNextPosition();
+        checkTileMapCollision();
+        setPosition(xtemp, ytemp);
+        if (isFalling && !falling) {
+            JukeBox.play("playerlands");
+        }
+        if (dx == 0)
+            x = (int) x;
+
+        checkAttack();
+
+        checkEnemyInteraction();
+
+        checkAnimations();
+
+        animation.update();
+
+        // set direction
+        if (!attacking && !upattacking && !charging && !knockback) {
+            if (right)
+                facingRight = true;
+            if (left)
+                facingRight = false;
+        }
+
+    }
+
+    private void checkAttack() {
+        // check done flinching
+        if (flinching) {
+            flinchCount++;
+            flinching = flinchCount <= 120;
+        }
+
+        // energy particles
+        ArrayList<EnergyParticle> particlesToRemove = new ArrayList<>();
+        for (int i = 0; i < energyParticles.size(); i++) {
+            energyParticles.get(i).update();
+            if (energyParticles.get(i).shouldRemove()) {
+                particlesToRemove.add(energyParticles.get(i));
+            }
+        }
+
+        for (EnergyParticle e : particlesToRemove) {
+            energyParticles.remove(e);
+        }
+
+        // check attack finished
+        if ((currentAction == ATTACKING_ANIM || currentAction == UPATTACKING_ANIM) && animation.hasPlayedOnce()) {
+            attacking = false;
+            upattacking = false;
+        }
+        if (currentAction == CHARGING_ANIM) {
+            if (animation.hasPlayed(5)) {
+                charging = false;
+            }
+            cr.y = (int) y - 20;
+            if (facingRight) {
+                cr.x = (int) x - 15;
+                energyParticles.add(new EnergyParticle(tileMap, x + 30, y, EnergyParticle.ENERGY_RIGHT));
+            } else {
+                cr.x = (int) x - 35;
+                energyParticles.add(new EnergyParticle(tileMap, x - 30, y, EnergyParticle.ENERGY_LEFT));
+            }
+
+        }
+    }
+
+    private void checkEnemyInteraction() {
+        // check enemy interaction
+        for (int i = 0; i < enemies.size(); i++) {
+
+            Enemy e = enemies.get(i);
+
+            // check attack
+            if (currentAction == ATTACKING_ANIM && animation.getFrame() == 3 && animation.getCount() == 0
+                    && e.intersects(ar)) {
+                e.hit(damage);
+            }
+
+            // check upward attack
+            if (currentAction == UPATTACKING_ANIM && animation.getFrame() == 3 && animation.getCount() == 0
+                    && e.intersects(aur)) {
+                e.hit(damage);
+            }
+
+            // check charging attack
+            if (currentAction == CHARGING_ANIM && animation.getCount() == 0 && e.intersects(cr)) {
+                e.hit(chargeDamage);
+            }
+
+            // collision with enemy
+            if (!e.isDead() && intersects(e) && !charging) {
+                hit(e.getDamage());
+            }
+
+            if (e.isDead()) {
+                JukeBox.play("explode", 2000);
+            }
+
+        }
+    }
+
+    private void checkAnimations() {
+        // set animation, ordered by priority
+        if (teleporting) {
+            setAnimation(TELEPORTING_ANIM);
+        } else if (knockback) {
+            setAnimation(KNOCKBACK_ANIM);
+        } else if (health == 0) {
+            setAnimation(DEAD_ANIM);
+        } else if (upattacking) {
+            checkUpAttackingAnim();
+        } else if (attacking) {
+            checkAttackingAnim();
+        } else if (charging) {
+            setAnimation(CHARGING_ANIM);
+        } else if (dy < 0) {
+            setAnimation(JUMPING_ANIM);
+        } else if (dy > 0) {
+            setAnimation(FALLING_ANIM);
+        } else if (dashing && (left || right)) {
+            setAnimation(DASHING_ANIM);
+        } else if (left || right) {
+            setAnimation(WALKING_ANIM);
+        } else {
+            setAnimation(IDLE_ANIM);
+        }
+    }
+
+    private void checkAttackingAnim() {
+        if (currentAction != ATTACKING_ANIM) {
+            JukeBox.play(PLAYERATTACK_MUSIC_NAME);
+            setAnimation(ATTACKING_ANIM);
+            ar.y = (int) y - 6;
+            ar.x = facingRight ? (int) x + 10 : (int) x - 40;
+        } else {
+            if (animation.getFrame() == 4 && animation.getCount() == 0) {
+                for (int c = 0; c < 3; c++) {
+                    if (facingRight)
+                        energyParticles.add(new EnergyParticle(tileMap, ar.x + ar.width - 4, ar.y + ar.height / 2,
+                                EnergyParticle.ENERGY_RIGHT));
+                    else
+                        energyParticles.add(new EnergyParticle(tileMap, ar.x + 4, ar.y + ar.height / 2,
+                                EnergyParticle.ENERGY_LEFT));
+                }
+            }
+        }
+    }
+
+    private void checkUpAttackingAnim() {
+        if (currentAction != UPATTACKING_ANIM) {
+            JukeBox.play(PLAYERATTACK_MUSIC_NAME);
+            setAnimation(UPATTACKING_ANIM);
+            aur.x = (int) x - 15;
+            aur.y = (int) y - 50;
+        } else {
+            if (animation.getFrame() == 4 && animation.getCount() == 0) {
+                for (int c = 0; c < 3; c++) {
+                    energyParticles.add(
+                            new EnergyParticle(tileMap, aur.x + aur.width / 2, aur.y + 5, EnergyParticle.ENERGY_UP));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+
+        // draw emote
+        if (emote == CONFUSED_EMOTE) {
+            g.drawImage(confused, (int) (x + xmap - cwidth / 2.0), (int) (y + ymap - 40), null);
+        } else if (emote == SURPRISED_EMOTE) {
+            g.drawImage(surprised, (int) (x + xmap - cwidth / 2.0), (int) (y + ymap - 40), null);
+        }
+
+        // draw energy particles
+        for (int i = 0; i < energyParticles.size(); i++) {
+            energyParticles.get(i).draw(g);
+        }
+
+        // flinch
+        if (flinching && !knockback && flinchCount % 10 < 5) {
+            return;
+        }
+
+        super.draw(g);
+
+    }
 }
