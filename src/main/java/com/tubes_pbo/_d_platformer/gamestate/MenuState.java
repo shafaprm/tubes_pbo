@@ -19,8 +19,6 @@ public class MenuState extends BasicState{
         super.draw(i);
         // titles and fonts
         i.setFont(fontMenu);
-        // i.drawRoundRect(210, 160, 240, 160, 50, 50);
-        // i.drawRect(220, 170, 220, 140);// Fills a square
         i.setColor(Color.RED);
         i.drawString("Play", 300, 223); // 25
         i.drawString("Options", 300, 248);
@@ -33,7 +31,7 @@ public class MenuState extends BasicState{
             case 0:
                 JukeBox.play("menuselect");
                 PlayerSave.init();
-                gsm.setState(GameStateManager.LEVEL1STATE); // start this level entrance
+                gsm.setState(GameStateManager.LEVEL1STATE);
                 break;
             case 1:
                 gsm.setState(GameStateManager.OPTIONSSTATE);
