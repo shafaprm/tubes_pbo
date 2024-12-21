@@ -6,19 +6,20 @@ import com.tubes_pbo._d_platformer.tilemap.TileMap;
 
 import java.awt.image.BufferedImage;
 
-public class RedEnergy extends Enemy{
+public class RedEnergy extends Enemy {
+
     public static final int VECTOR = 0;
     public static final int GRAVITY = 1;
     public static final int BOUNCE = 2;
-    private BufferedImage[] startSprites;
-    private BufferedImage[] sprites;
+
+    private final BufferedImage[] startSprites;
+    private final BufferedImage[] sprites;
     private boolean start;
     private boolean permanent;
-    private int type = 0;
-    private int bounceCount = 0;
+    private int type;
+    private int bounceCount;
 
     public RedEnergy(TileMap tm) {
-
         super(tm);
 
         health = maxHealth = 1;
@@ -40,62 +41,79 @@ public class RedEnergy extends Enemy{
         start = true;
         flinching = true;
         permanent = false;
-
+        type = VECTOR;
+        bounceCount = 0;
     }
 
-    public void setType(int i) {
-        type = i;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public void setPermanent(boolean b) {
-        permanent = b;
+    public void setPermanent(boolean permanent) {
+        this.permanent = permanent;
     }
 
     @Override
     public void update() {
+        handleStartAnimation();
+        updatePositionBasedOnType();
+        updateAnimation();
+        handleRemovalConditions();
+    }
 
+    private void handleStartAnimation() {
         if (start && animation.hasPlayedOnce()) {
             animation.setFrames(sprites);
             animation.setNumFrames(3);
             animation.setDelay(2);
             start = false;
         }
-
-        if (type == VECTOR) {
-            x += dx;
-            y += dy;
-        } else if (type == GRAVITY) {
-            dy += 0.2;
-            x += dx;
-            y += dy;
-        } else if (type == BOUNCE) {
-            double dx2 = dx;
-            double dy2 = dy;
-            checkTileMapCollision();
-            if (dx == 0) {
-                dx = -dx2;
-                bounceCount++;
-            }
-            if (dy == 0) {
-                dy = -dy2;
-                bounceCount++;
-            }
-            x += dx;
-            y += dy;
-        }
-
-        // update animation
-        animation.update();
-
-        if (!permanent) {
-            if (x < 0 || x > tileMap.getWidth() || y < 0 || y > tileMap.getHeight()) {
-                remove = true;
-            }
-            if (bounceCount == 3) {
-                remove = true;
-            }
-        }
-
     }
 
+    private void updatePositionBasedOnType() {
+        switch (type) {
+            case VECTOR -> {
+                x += dx;
+                y += dy;
+            }
+            case GRAVITY -> {
+                dy += 0.2;
+                x += dx;
+                y += dy;
+            }
+            case BOUNCE -> handleBounceMovement();
+        }
+    }
+
+    private void handleBounceMovement() {
+        double previousDx = dx;
+        double previousDy = dy;
+
+        checkTileMapCollision();
+
+        if (dx == 0) {
+            dx = -previousDx;
+            bounceCount++;
+        }
+        if (dy == 0) {
+            dy = -previousDy;
+            bounceCount++;
+        }
+
+        x += dx;
+        y += dy;
+    }
+
+    private void updateAnimation() {
+        animation.update();
+    }
+
+    private void handleRemovalConditions() {
+        if (!permanent) {
+            boolean outOfBounds = x < 0 || x > tileMap.getWidth() || y < 0 || y > tileMap.getHeight();
+            if (outOfBounds || bounceCount == 3) {
+                remove = true;
+            }
+        }
+    }
 }
