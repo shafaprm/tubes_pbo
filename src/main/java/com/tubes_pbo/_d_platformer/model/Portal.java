@@ -7,10 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 
-/**
- * @author ArtOfSoul
- */
-
 public class Portal extends MapObject {
 
     private BufferedImage[] closedSprites;

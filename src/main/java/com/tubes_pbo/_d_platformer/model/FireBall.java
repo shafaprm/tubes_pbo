@@ -6,10 +6,6 @@ import al.tonikolaba.tilemap.TileMap;
 
 import java.awt.image.BufferedImage;
 
-/**
- * @author ArtOfSoul
- */
-
 public class FireBall extends MapObject {
 
     private boolean hit;
