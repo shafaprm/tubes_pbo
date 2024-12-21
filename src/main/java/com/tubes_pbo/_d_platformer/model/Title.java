@@ -8,10 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 
-/**
- * @author ArtOfSoul
- */
-
 public class Title {
 
     private BufferedImage image;
