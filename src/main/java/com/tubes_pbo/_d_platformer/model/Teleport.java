@@ -1,14 +1,13 @@
-package al.tonikolaba.entity;
+package com.tubes_pbo._d_platformer.model;
 
-import al.tonikolaba.handlers.LoggingHelper;
-import al.tonikolaba.tilemap.TileMap;
+import com.tubes_pbo._d_platformer.handlers.LoggingHelper;
+import com.tubes_pbo._d_platformer.tilemap.TileMap;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 
-public class Teleport extends MapObject {
-
+public class Teleport extends MapObject{
     private BufferedImage[] sprites;
 
     public Teleport(TileMap tm) {

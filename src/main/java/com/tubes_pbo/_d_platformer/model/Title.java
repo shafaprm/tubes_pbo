@@ -1,16 +1,14 @@
-package al.tonikolaba.entity;
-
-import al.tonikolaba.handlers.LoggingHelper;
-import al.tonikolaba.main.GamePanel;
+package com.tubes_pbo._d_platformer.model;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 
+import com.tubes_pbo._d_platformer.handlers.LoggingHelper;
+import com.tubes_pbo._d_platformer.main.GamePanel;
 
 public class Title {
-
     private BufferedImage image;
 
     private int count;
@@ -82,5 +80,4 @@ public class Title {
         if (!remove)
             g.drawImage(image, (int) x, (int) y, null);
     }
-
 }
