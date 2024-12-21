@@ -1,9 +1,7 @@
-*MAP OBJECT*
-
 package com.tubes_pbo._d_platformer.model;
 
 import java.awt.Rectangle;
-import com.tubes_pbo._d_platformer.main.GamePanel;
+
 import com.tubes_pbo._d_platformer.tilemap.Tile;
 import com.tubes_pbo._d_platformer.tilemap.TileMap;
 
@@ -13,31 +11,56 @@ public class MapObject {
     protected double xmap;
     protected double ymap;
 
-    // Position and vector
-    protected double x, y, dx, dy;
+    // position and vector
+    protected double x;
+    protected double y;
+    protected double dx;
+    protected double dy;
 
-    // Dimensions
-    protected int width, height;
+    // dimensions
+    protected int width;
+    protected int height;
 
-    // Collision box
-    protected int cwidth, cheight;
+    // collision box
+    protected int cwidth;
+    protected int cheight;
 
-    // Collision details
-    protected int currRow, currCol;
-    protected double xdest, ydest, xtemp, ytemp;
-    protected boolean topLeft, topRight, bottomLeft, bottomRight;
+    // collision
+    protected int currRow;
+    protected int currCol;
+    protected double xdest;
+    protected double ydest;
+    protected double xtemp;
+    protected double ytemp;
+    protected boolean topLeft;
+    protected boolean topRight;
+    protected boolean bottomLeft;
+    protected boolean bottomRight;
 
-    // Animation
+    // animation
     protected Animation animation;
-    protected int currentAction, previousAction;
+    protected int currentAction;
+    protected int previousAction;
     protected boolean facingRight;
 
-    // Movement
-    protected boolean left, right, up, down, jumping, falling;
+    // movement
+    protected boolean left;
+    protected boolean right;
+    protected boolean up;
+    protected boolean down;
+    protected boolean jumping;
+    protected boolean falling;
 
-    // Movement attributes
-    protected double moveSpeed, maxSpeed, stopSpeed, fallSpeed, maxFallSpeed, jumpStart, stopJumpSpeed;
+    // movement attributes
+    protected double moveSpeed;
+    protected double maxSpeed;
+    protected double stopSpeed;
+    protected double fallSpeed;
+    protected double maxFallSpeed;
+    protected double jumpStart;
+    protected double stopJumpSpeed;
 
+    // constructor
     public MapObject(TileMap tm) {
         tileMap = tm;
         tileSize = tm.getTileSize();
@@ -47,7 +70,9 @@ public class MapObject {
     }
 
     public boolean intersects(MapObject o) {
-        return getRectangle().intersects(o.getRectangle());
+        Rectangle r1 = getRectangle();
+        Rectangle r2 = o.getRectangle();
+        return r1.intersects(r2);
     }
 
     public boolean intersects(Rectangle r) {
@@ -55,7 +80,9 @@ public class MapObject {
     }
 
     public boolean contains(MapObject o) {
-        return getRectangle().contains(o.getRectangle());
+        Rectangle r1 = getRectangle();
+        Rectangle r2 = o.getRectangle();
+        return r1.contains(r2);
     }
 
     public boolean contains(Rectangle r) {
@@ -71,19 +98,22 @@ public class MapObject {
         int rightTile = (int) (x + cwidth / 2.0 - 1) / tileSize;
         int topTile = (int) (y - cheight / 2.0) / tileSize;
         int bottomTile = (int) (y + cheight / 2.0 - 1) / tileSize;
-
         if (topTile < 0 || bottomTile >= tileMap.getNumRows() || leftTile < 0 || rightTile >= tileMap.getNumCols()) {
             topLeft = topRight = bottomLeft = bottomRight = false;
             return;
         }
-
-        topLeft = tileMap.getType(topTile, leftTile) == Tile.BLOCKED;
-        topRight = tileMap.getType(topTile, rightTile) == Tile.BLOCKED;
-        bottomLeft = tileMap.getType(bottomTile, leftTile) == Tile.BLOCKED;
-        bottomRight = tileMap.getType(bottomTile, rightTile) == Tile.BLOCKED;
+        int tl = tileMap.getType(topTile, leftTile);
+        int tr = tileMap.getType(topTile, rightTile);
+        int bl = tileMap.getType(bottomTile, leftTile);
+        int br = tileMap.getType(bottomTile, rightTile);
+        topLeft = tl == Tile.BLOCKED;
+        topRight = tr == Tile.BLOCKED;
+        bottomLeft = bl == Tile.BLOCKED;
+        bottomRight = br == Tile.BLOCKED;
     }
 
     public void checkTileMapCollision() {
+
         currCol = (int) x / tileSize;
         currRow = (int) y / tileSize;
 
@@ -94,6 +124,7 @@ public class MapObject {
         ytemp = y;
 
         checkYCollision();
+
         checkXCollision();
 
         if (!falling) {
@@ -102,34 +133,47 @@ public class MapObject {
                 falling = true;
             }
         }
+
     }
 
     private void checkXCollision() {
         calculateCorners(xdest, y);
-
-        if (dx < 0 && (topLeft || bottomLeft)) {
-            dx = 0;
-            xtemp = currCol * tileSize + cwidth / 2.0;
-        } else if (dx > 0 && (topRight || bottomRight)) {
-            dx = 0;
-            xtemp = (currCol + 1) * tileSize - cwidth / 2.0;
-        } else {
-            xtemp += dx;
+        if (dx < 0) {
+            if (topLeft || bottomLeft) {
+                dx = 0;
+                xtemp = currCol * tileSize + cwidth / 2.0;
+            } else {
+                xtemp += dx;
+            }
+        }
+        if (dx > 0) {
+            if (topRight || bottomRight) {
+                dx = 0;
+                xtemp = (currCol + 1) * tileSize - cwidth / 2.0;
+            } else {
+                xtemp += dx;
+            }
         }
     }
 
     private void checkYCollision() {
         calculateCorners(x, ydest);
-
-        if (dy < 0 && (topLeft || topRight)) {
-            dy = 0;
-            ytemp = currRow * tileSize + cheight / 2.0;
-        } else if (dy > 0 && (bottomLeft || bottomRight)) {
-            dy = 0;
-            falling = false;
-            ytemp = (currRow + 1) * tileSize - cheight / 2.0;
-        } else {
-            ytemp += dy;
+        if (dy < 0) {
+            if (topLeft || topRight) {
+                dy = 0;
+                ytemp = currRow * tileSize + cheight / 2.0;
+            } else {
+                ytemp += dy;
+            }
+        }
+        if (dy > 0) {
+            if (bottomLeft || bottomRight) {
+                dy = 0;
+                falling = false;
+                ytemp = (currRow + 1) * tileSize - cheight / 2.0;
+            } else {
+                ytemp += dy;
+            }
         }
     }
 
@@ -147,6 +191,18 @@ public class MapObject {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getCWidth() {
+        return cwidth;
+    }
+
+    public int getCHeight() {
+        return cheight;
+    }
+
+    public boolean isFacingRight() {
+        return facingRight;
     }
 
     public void setPosition(double x, double y) {
@@ -185,20 +241,17 @@ public class MapObject {
     }
 
     public boolean notOnScreen() {
-        return x + xmap + width < 0 || x + xmap - width > GamePanel.WIDTH ||
-                y + ymap + height < 0 || y + ymap - height > GamePanel.HEIGHT;
+        return x + xmap + width < 0 || x + xmap - width > GamePanel.WIDTH || y + ymap + height < 0
+                || y + ymap - height > GamePanel.HEIGHT;
     }
 
     public void draw(java.awt.Graphics2D g) {
         setMapPosition();
-
-        int drawX = (int) (x + xmap - width / 2.0);
-        int drawY = (int) (y + ymap - height / 2.0);
-
         if (facingRight) {
-            g.drawImage(animation.getImage(), drawX, drawY, null);
+            g.drawImage(animation.getImage(), (int) (x + xmap - width / 2.0), (int) (y + ymap - height / 2.0), null);
         } else {
-            g.drawImage(animation.getImage(), drawX + width, drawY, -width, height, null);
+            g.drawImage(animation.getImage(), (int) (x + xmap - width / 2.0 + width), (int) (y + ymap - height / 2.0),
+                    -width, height, null);
         }
     }
 }
