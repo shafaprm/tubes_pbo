@@ -1,21 +1,11 @@
-package al.tonikolaba.entity;
+package com.tubes_pbo._d_platformer.model;
 
-import al.tonikolaba.handlers.LoggingHelper;
-import al.tonikolaba.main.GamePanel;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-
-/**
- * @author ArtOfSoul
- */
+import com.tubes_pbo._d_platformer.main.GamePanel;
 
 public class Title {
-
     private BufferedImage image;
-
     private int count;
     private boolean done;
     private boolean remove;
@@ -26,64 +16,57 @@ public class Title {
 
     private int width;
 
-    public Title(String s) {
-
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream(s));
-            width = image.getWidth();
-            x = -width;
-            done = false;
-        } catch (Exception e) {
-            LoggingHelper.LOGGER.log(Level.SEVERE, e.getMessage());
-        }
-
-    }
-
+    // Constructor to initialize the Title object with a given BufferedImage
     public Title(BufferedImage image) {
         this.image = image;
-        width = image.getWidth();
-        x = -width;
-        done = false;
+        this.width = image.getWidth();
+        this.x = -width;
+        this.done = false;
     }
 
+    // Reset the Title to its initial state
     public void reset() {
-        done = false;
-        remove = false;
-        x = -width;
+        this.done = false;
+        this.remove = false;
+        this.x = -width;
     }
 
+    // Set the vertical position of the Title
     public void sety(double y) {
         this.y = y;
     }
 
+    // Begin the Title animation by setting the horizontal speed
     public void begin() {
-        dx = 10;
+        this.dx = 10;
     }
 
-    public boolean shouldRemove() {
-        return remove;
-    }
-
+    // Update the Title's position based on its state and speed
     public void update() {
         if (!done) {
             if (x >= (GamePanel.WIDTH - width) / 2.0) {
-                x = (GamePanel.WIDTH - width) / 2.0;
+                x = (GamePanel.WIDTH - width) / 2.0;  // Stop at the center
                 count++;
-                if (count >= 120)
+
+                if (count >= 120) {  // Stop after 120 updates
                     done = true;
+                }
             } else {
-                x += dx;
+                x += dx;  // Move the Title towards the center
             }
         } else {
-            x += dx;
-            if (x > GamePanel.WIDTH)
-                remove = true;
+            x += dx;  // After being centered, move the Title out of the screen
+
+            if (x > GamePanel.WIDTH) {  // If the Title has moved beyond the screen width
+                remove = true;  // Mark it for removal
+            }
         }
     }
 
+    // Draw the Title on the screen if it hasn't been removed
     public void draw(Graphics2D g) {
-        if (!remove)
-            g.drawImage(image, (int) x, (int) y, null);
+        if (!remove) {
+            g.drawImage(image, (int) x, (int) y, null);  // Draw the Title at its position
+        }
     }
-
 }
