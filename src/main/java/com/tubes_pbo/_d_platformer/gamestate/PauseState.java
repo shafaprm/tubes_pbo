@@ -23,7 +23,7 @@ public class PauseState extends GameState{
         g.setColor(Color.WHITE);
         g.fillRoundRect(180, 130, 300, 220, 50, 50);
         g.setColor(Color.YELLOW);
-        g.fillRect(190, 140, 280, 200); // Fills a square
+        g.fillRect(190, 140, 280, 200);
         g.setColor(Color.RED);
         g.setFont(fontMenu);
         g.drawString("Game Paused", 280, 230);
