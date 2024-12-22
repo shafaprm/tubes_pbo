@@ -1,8 +1,8 @@
-package al.tonikolaba.entity;
+package com.tubes_pbo._d_platformer.model;
 
 import javax.imageio.ImageIO;
 
-import al.tonikolaba.tilemap.TileMap;
+import com.tubes_pbo._d_platformer.tilemap.TileMap;
 
 import java.awt.image.BufferedImage;
 
@@ -97,8 +97,6 @@ public class FireBall extends MapObject {
         }
 
     }
-
-    //Draw-Method is inherited.
 }
 
 
