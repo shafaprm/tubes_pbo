@@ -64,22 +64,6 @@ public class JukeBox {
             clips.get(s).stop();
     }
 
-    public static void resume(String s) {
-        if (mute)
-            return;
-        if (clips.get(s).isRunning())
-            return;
-        clips.get(s).start();
-    }
-
-    public static void loop(String s) {
-        loop(s, gap, gap, clips.get(s).getFrameLength() - 1);
-    }
-
-    public static void loop(String s, int frame) {
-        loop(s, frame, gap, clips.get(s).getFrameLength() - 1);
-    }
-
     public static void loop(String s, int start, int end) {
         loop(s, gap, start, end);
     }
@@ -99,14 +83,5 @@ public class JukeBox {
 
     public static int getFrames(String s) {
         return clips.get(s).getFrameLength();
-    }
-
-    public static int getPosition(String s) {
-        return clips.get(s).getFramePosition();
-    }
-
-    public static void close(String s) {
-        stop(s);
-        clips.get(s).close();
     }
 }
