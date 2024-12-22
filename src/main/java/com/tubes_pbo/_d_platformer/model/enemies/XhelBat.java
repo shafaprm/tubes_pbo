@@ -1,80 +1,70 @@
 package com.tubes_pbo._d_platformer.model.enemies;
 
-import com.tubes_pbo._d_platformer.model.Player;
+import com.tubes_pbo._d_platformer.model.Enemy;
 import com.tubes_pbo._d_platformer.handlers.Content;
-import com.tubes_pbo._d_platformer.main.GamePanel;
 import com.tubes_pbo._d_platformer.tilemap.TileMap;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class XhelBat extends Flyer{
-    private BufferedImage[] sprites;
-    private Player player;
-    private boolean active;
+public class Zogu extends Enemy {
+    private final BufferedImage[] idleSprites;
 
-    public XhelBat(TileMap tm, Player p) {
+    private int tick;
+    private final double oscillationRateX;
+    private final double oscillationRateY;
 
-        super(tm, FlyerType.XHEL_BAT);
-        player = p;
+    public Zogu(TileMap tm) {
+        super(tm);
 
-        sprites = Content.getXhelbat()[0];
+        health = maxHealth = 2;
 
-        animation.setFrames(sprites);
+        width = 39;
+        height = 20;
+        cwidth = 25;
+        cheight = 15;
+
+        damage = 1;
+        moveSpeed = 5;
+
+        idleSprites = Content.getZogu()[0];
+        animation.setFrames(idleSprites);
         animation.setDelay(4);
 
-        left = true;
-        facingRight = false;
-
+        tick = 0;
+        oscillationRateX = Math.random() * 0.06 + 0.07;
+        oscillationRateY = Math.random() * 0.06 + 0.07;
     }
 
     @Override
     public void update() {
+        handleFlinching();
 
-        if (!active) {
-            if (Math.abs(player.getx() - x) < GamePanel.WIDTH)
-                active = true;
-            return;
-        }
+        updatePosition();
 
-        // check if done flinching
+        animation.update();
+    }
+
+    private void handleFlinching() {
         if (flinching) {
             flinchCount++;
-            if (flinchCount == 6)
+            if (flinchCount >= 6) {
                 flinching = false;
+            }
         }
+    }
 
-        getNextPosition();
-        checkTileMapCollision();
-        calculateCorners(x, ydest + 1);
-        if (!bottomLeft) {
-            left = false;
-            right = facingRight = true;
-        }
-        if (!bottomRight) {
-            left = true;
-            right = facingRight = false;
-        }
-        setPosition(xtemp, ytemp);
-
-        if (dx == 0) {
-            left = !left;
-            right = !right;
-            facingRight = !facingRight;
-        }
-
-        // update animation
-        animation.update();
-
+    private void updatePosition() {
+        tick++;
+        x += Math.sin(oscillationRateX * tick);
+        y += Math.sin(oscillationRateY * tick);
     }
 
     @Override
     public void draw(Graphics2D g) {
-
         if (flinching && (flinchCount == 0 || flinchCount == 2)) {
             return;
         }
-
         super.draw(g);
-
     }
 }

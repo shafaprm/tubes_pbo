@@ -21,7 +21,6 @@ public class Spirit extends Enemy{
     private int step;
     private int stepCount;
 
-    // attack pattern
     private int[] steps = { 0, 1, 0, 1, 2, 1, 0, 2, 1, 2 };
 
     private RedEnergy[] shield;
@@ -75,7 +74,6 @@ public class Spirit extends Enemy{
         if (health == 0)
             return;
 
-        // restart attack pattern
         if (step == steps.length) {
             step = 0;
         }
@@ -148,7 +146,6 @@ public class Spirit extends Enemy{
         // attacks
         ////////////
 
-        // fly around dropping bombs
         if (steps[step] == 0) {
             stepCount++;
             if (y > 60) {
@@ -167,7 +164,7 @@ public class Spirit extends Enemy{
                     dx = -1;
                 }
             }
-            if (stepCount % 10 == 0) { // 60 per te hedhur me shpesh bombat
+            if (stepCount % 10 == 0) {
                 RedEnergy de = new RedEnergy(tileMap);
                 de.setType(RedEnergy.GRAVITY);
                 de.setPosition(x, y);
@@ -181,7 +178,7 @@ public class Spirit extends Enemy{
                 right = left = false;
             }
         }
-        // floor sweep
+
         else if (steps[step] == 1) {
             stepCount++;
             if (stepCount == 1) {
@@ -209,7 +206,7 @@ public class Spirit extends Enemy{
             }
 
         }
-        // shockwave
+
         else if (steps[step] == 2) {
             stepCount++;
             if (stepCount == 1) {
