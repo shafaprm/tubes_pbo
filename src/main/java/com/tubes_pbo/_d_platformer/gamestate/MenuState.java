@@ -19,7 +19,7 @@ public class MenuState extends BasicState{
 
         i.setColor(Color.RED);
         i.drawString("Play", 300, 223);
-        i.drawString("Quit", 300, 273);
+        i.drawString("Quit", 300, 243);
     }
 
     @Override
