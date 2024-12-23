@@ -25,13 +25,13 @@ import com.tubes_pbo._d_platformer.model.Title;
 import com.tubes_pbo._d_platformer.model.enemies.RedEnergy;
 import com.tubes_pbo._d_platformer.model.enemies.Ufo;
 import com.tubes_pbo._d_platformer.model.enemies.XhelBat;
+import com.tubes_pbo._d_platformer.model.enemies.Zogu;
 
 import com.tubes_pbo._d_platformer.handlers.Keys;
 import com.tubes_pbo._d_platformer.handlers.LoggingHelper;
-import com.tubes_pbo._d_platformer.main.GamePanel;
-import com.tubes_pbo._d_platformer.tilemap.TileMap;
 import com.tubes_pbo._d_platformer.tilemap.Background;
-
+import com.tubes_pbo._d_platformer.tilemap.TileMap;
+import com.tubes_pbo._d_platformer.main.GamePanel;
 
 public class GameState extends BasicState{
     private static final String TELEPORT_MUSIC_NAME = "teleport";
@@ -39,9 +39,8 @@ public class GameState extends BasicState{
     protected ArrayList<EnemyProjectile> eprojectiles;
     protected ArrayList<Explosion> explosions;
     protected HUD hud;
-    protected BufferedImage batBatStart;
+    protected BufferedImage SunnyLandStart;
     protected Title title;
-    protected Title subtitle;
     protected Teleport teleport;
     // events
     protected int eventCount = 0;
@@ -202,15 +201,11 @@ public class GameState extends BasicState{
     }
 
     protected void setupTitle(int[] titleCoords, int[] subtitleCoords) {
-        // title and subtitle
         try {
-            batBatStart = ImageIO.read(getClass().getResourceAsStream("/HUD/batbat.gif"));
+            SunnyLandStart = ImageIO.read(getClass().getResourceAsStream("/HUD/title-screen.png"));
             this.title = new Title(
-                    batBatStart.getSubimage(titleCoords[0], titleCoords[1], titleCoords[2], titleCoords[3]));
+                    SunnyLandStart.getSubimage(titleCoords[0], titleCoords[1], titleCoords[2], titleCoords[3]));
             this.title.sety(60);
-            this.subtitle = new Title(batBatStart.getSubimage(subtitleCoords[0], subtitleCoords[1], subtitleCoords[2],
-                    subtitleCoords[3]));
-            this.subtitle.sety(85);
         } catch (Exception e) {
             LoggingHelper.LOGGER.log(Level.SEVERE, e.getMessage());
         }
@@ -270,9 +265,6 @@ public class GameState extends BasicState{
         // move title and subtitle
         if (title != null) {
             title.update();
-        }
-        if (subtitle != null) {
-            subtitle.update();
         }
 
         // move backgrounds
@@ -349,8 +341,6 @@ public class GameState extends BasicState{
         // draw title
         if (title != null)
             title.draw(g);
-        if (subtitle != null)
-            subtitle.draw(g);
 
         // draw transition boxes
         g.setColor(java.awt.Color.YELLOW);
@@ -371,8 +361,6 @@ public class GameState extends BasicState{
         eventStartFunc();
         if (title != null)
             title.reset();
-        if (subtitle != null)
-            subtitle.reset();
     }
 
     protected void eventStartFunc() {
@@ -397,8 +385,6 @@ public class GameState extends BasicState{
             eventCount = 0;
             if (portal != null)
                 eventPortal = blockInput = true;
-            if (subtitle != null)
-                subtitle.begin();
             tb.clear();
         }
     }

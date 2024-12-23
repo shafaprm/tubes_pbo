@@ -17,9 +17,9 @@ public class MenuState extends BasicState{
         super.draw(i);
         i.setFont(fontMenu);
 
-        i.setColor(Color.RED);
+        i.setColor(Color.ORANGE);
         i.drawString("Play", 300, 223);
-        i.drawString("Quit", 300, 243);
+        i.drawString("Quit", 300, 268);
     }
 
     @Override
@@ -35,18 +35,4 @@ public class MenuState extends BasicState{
                 break;
         }
     }
-
-//    @Override
-//    public void handleInput() {
-//        if (Keys.isPressed(Keys.ENTER))
-//            select();
-//        if (Keys.isPressed(Keys.UP) && currentChoice > 0) {
-//            JukeBox.play("menuoption", 0);
-//            currentChoice--;
-//        }
-//        if (Keys.isPressed(Keys.DOWN) && currentChoice < options.length - 1) {
-//            JukeBox.play("menuoption", 0);
-//            currentChoice++;
-//        }
-//    }
 }

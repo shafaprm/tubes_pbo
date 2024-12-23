@@ -82,7 +82,7 @@ public abstract class BasicState {
             g.drawImage(head, 270, 317, null);
         // other
         g.setFont(font2);
-        g.drawString("tubes_pbo \u00A9 \u00AE", 20, 468);
+        g.drawString("tubes pbo \u00A9 \u00AE", 20, 468);
     }
 
     protected void select() {
