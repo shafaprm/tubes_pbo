@@ -6,9 +6,9 @@ import com.tubes_pbo._d_platformer.audio.JukeBox;
 import com.tubes_pbo._d_platformer.handlers.Keys;
 import com.tubes_pbo._d_platformer.main.GamePanel;
 
-public class AcidState extends BasicState {
+public class FinishState extends BasicState {
 
-    public AcidState(GameStateManager gsm) {
+    public FinishState(GameStateManager gsm) {
         super(gsm);
     }
 

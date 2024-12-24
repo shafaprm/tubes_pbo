@@ -10,8 +10,7 @@ public class GameStateManager {
     public static final int LEVEL1STATE = 2;
     public static final int LEVEL2STATE = 3;
     public static final int LEVEL3STATE = 4;
-    public static final int LEVEL4STATE = 5;
-    public static final int ACIDSTATE = 15;
+    public static final int FINISHSTATE = 15;
 
     public BasicState[] gameStates;
     private int currentState;
@@ -35,8 +34,7 @@ public class GameStateManager {
             case LEVEL1STATE -> gameStates[state] = new Level1State(this);
             case LEVEL2STATE -> gameStates[state] = new Level2State(this);
             case LEVEL3STATE -> gameStates[state] = new Level3State(this);
-            case LEVEL4STATE -> gameStates[state] = new Level4State(this);
-            case ACIDSTATE -> gameStates[state] = new AcidState(this);
+            case FINISHSTATE -> gameStates[state] = new FinishState(this);
             default -> throw new IllegalArgumentException("Invalid game state: " + state);
         }
     }
