@@ -13,14 +13,14 @@ public class Level2State extends GameState{
     public void init(int nextLevel) {
         super.init(nextLevel);
 
-        generateTileMap("/Maps/level2.map", 0, 140, true);
+        generateTileMap("/Maps/cloud.map", 0, 140, true);
         setupGameObjects(100, 161, 3700, 370, false);
 
         setupMusic("level1", "/Music/intro_theme.mp3", true);
 
-        sky = new Background("/Backgrounds/qielli1.gif", 0);
-        clouds = new Background("/Backgrounds/mali1.gif", 0.1);
-        mountains = new Background("/Backgrounds/kodra.gif", 0.2);
+        sky = new Background("/Backgrounds/cloud.gif", 0);
+        clouds = new Background("/Backgrounds/mountain.gif", 0.1);
+        mountains = new Background("/Backgrounds/hill.gif", 0.2);
 
         enemyTypesInLevel = new EnemyType[] { EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT,
                 EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT,
