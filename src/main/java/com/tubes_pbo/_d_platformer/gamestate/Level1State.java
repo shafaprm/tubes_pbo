@@ -19,9 +19,9 @@ public class Level1State extends GameState{
 
         setupMusic("level1", "/Music/intro_theme.mp3", true);
 
-        sky = new Background("/Backgrounds/qielli1.gif", 0);
-        clouds = new Background("/Backgrounds/mali1.gif", 0.1);
-        mountains = new Background("/Backgrounds/kodra.gif", 0.2);
+        sky = new Background("/Backgrounds/cloud.gif", 0);
+        clouds = new Background("/Backgrounds/mountain.gif", 0.1);
+        mountains = new Background("/Backgrounds/hill.gif", 0.2);
 
         enemyTypesInLevel = new EnemyType[] { EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT,
                 EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT,
