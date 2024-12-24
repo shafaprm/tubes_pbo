@@ -9,21 +9,19 @@ public class Level3State extends GameState{
 
     public Level3State(GameStateManager gsm) {
         super(gsm);
-        init(GameStateManager.LEVEL4STATE);
+        init(GameStateManager.FINISHSTATE);
     }
 
     @Override
     public void init(int nextLevel) {
 
         super.init(nextLevel);
-        // backgrounds
         temple = new Background("/Backgrounds/temple1.gif", 0.5, 0);
 
-        // tilemap
         generateTileMap("/Maps/level3.map", 140, 0, false);
 
         setupGameObjects(300, 131, 2850, 371, false);
-        setupTitle(new int[] { 0, 0, 178, 20 }, new int[] { 0, 33, 91, 13 });
+        setupTitle(new int[] { 0, 0, 193, 36 });
         setupMusic("level2", "/Music/level1v2.mp3", true);
 
         enemyTypesInLevel = new EnemyType[] { EnemyType.XHELBAT, EnemyType.XHELBAT, EnemyType.XHELBAT,
@@ -53,10 +51,6 @@ public class Level3State extends GameState{
             eventQuake();
 
     }
-
-    ///////////////////////////////////////////////////////
-    //////////////////// EVENTS
-    ///////////////////////////////////////////////////////
 
     // earthquake
     private void eventQuake() {

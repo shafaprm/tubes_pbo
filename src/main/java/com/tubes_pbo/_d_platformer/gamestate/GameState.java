@@ -18,8 +18,6 @@ import com.tubes_pbo._d_platformer.model.Explosion;
 import com.tubes_pbo._d_platformer.model.HUD;
 import com.tubes_pbo._d_platformer.model.Player;
 import com.tubes_pbo._d_platformer.model.PlayerSave;
-import com.tubes_pbo._d_platformer.model.Portal;
-import com.tubes_pbo._d_platformer.model.Spirit;
 import com.tubes_pbo._d_platformer.model.Teleport;
 import com.tubes_pbo._d_platformer.model.Title;
 import com.tubes_pbo._d_platformer.model.enemies.RedEnergy;
@@ -42,14 +40,11 @@ public class GameState extends BasicState{
     protected BufferedImage SunnyLandStart;
     protected Title title;
     protected Teleport teleport;
-    // events
     protected int eventCount = 0;
     protected boolean eventStart;
     protected ArrayList<Rectangle> tb;
     protected boolean eventFinish;
     protected boolean eventDead;
-    protected boolean eventPortal;
-    protected Portal portal;
     protected EnemyType[] enemyTypesInLevel;
     protected int[][] coords;
     protected Background sky;
@@ -134,7 +129,6 @@ public class GameState extends BasicState{
     }
 
     protected void generateTileMap(String map, int x, int y, boolean bounds) {
-        // tilemap
         tileMap = new TileMap(30);
         tileMap.loadTiles("/Tilesets/ruinstileset.gif");
         tileMap.loadMap(map);
@@ -176,9 +170,6 @@ public class GameState extends BasicState{
         if (!portal) {
             teleport = new Teleport(tileMap);
             teleport.setPosition(goalX, goalY);
-        } else {
-            this.portal = new Portal(tileMap);
-            this.portal.setPosition(goalX, goalY);
         }
 
         // start event
@@ -200,7 +191,7 @@ public class GameState extends BasicState{
             JukeBox.loop(level, 600, JukeBox.getFrames(level) - 2200);
     }
 
-    protected void setupTitle(int[] titleCoords, int[] subtitleCoords) {
+    protected void setupTitle(int[] titleCoords) {
         try {
             SunnyLandStart = ImageIO.read(getClass().getResourceAsStream("/HUD/title-screen.png"));
             this.title = new Title(
@@ -224,9 +215,6 @@ public class GameState extends BasicState{
                     break;
                 case XHELBAT:
                     e = new XhelBat(this.tileMap, this.player);
-                    break;
-                case SPIRIT:
-                    e = new Spirit(this.tileMap, this.player, this.enemies, this.explosions);
                     break;
                 default:
                     e = new Zogu(this.tileMap);
@@ -332,8 +320,6 @@ public class GameState extends BasicState{
         // draw teleport
         if (teleport != null)
             teleport.draw(g);
-        if (portal != null)
-            portal.draw(g);
 
         // draw hud
         hud.draw(g);
@@ -364,6 +350,7 @@ public class GameState extends BasicState{
     }
 
     protected void eventStartFunc() {
+        LoggingHelper.LOGGER.log(Level.INFO, "Event Start: eventCount = " + eventCount);
         eventCount++;
         if (eventCount == 1) {
             tb.clear();
@@ -383,14 +370,14 @@ public class GameState extends BasicState{
         if (eventCount == 60) {
             eventStart = blockInput = false;
             eventCount = 0;
-            if (portal != null)
-                eventPortal = blockInput = true;
+
             tb.clear();
         }
     }
 
     // player has died
     protected void eventDeadFunc() {
+        LoggingHelper.LOGGER.log(Level.INFO, "Event Dead: eventCount = " + eventCount);
         eventCount++;
         if (eventCount == 1) {
             player.setDead();
@@ -418,6 +405,7 @@ public class GameState extends BasicState{
     }
 
     protected void eventFinishFunc() {
+        LoggingHelper.LOGGER.log(Level.INFO, "Event Finish: eventCount = " + eventCount);
         JukeBox.stop(levelMusicName);
         eventCount++;
         if (eventCount == 1) {
