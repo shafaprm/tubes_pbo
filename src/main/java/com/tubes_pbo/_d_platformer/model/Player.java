@@ -107,7 +107,7 @@ public class Player extends MapObject{
         try {
 
             BufferedImage spritesheet = ImageIO
-                    .read(getClass().getResourceAsStream("/Sprites/Player/BatterySpirtes.gif"));
+                    .read(getClass().getResourceAsStream("/Sprites/Player/BatterySprites.gif"));
 
             int count = 0;
             sprites = new ArrayList<>();

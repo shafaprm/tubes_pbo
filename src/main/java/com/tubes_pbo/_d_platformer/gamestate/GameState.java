@@ -47,10 +47,9 @@ public class GameState extends BasicState{
     protected boolean eventDead;
     protected EnemyType[] enemyTypesInLevel;
     protected int[][] coords;
-    protected Background sky;
-    protected Background clouds;
-    protected Background mountains;
-    protected Background perendimi;
+    protected Background cloud;
+    protected Background mountain;
+    protected Background hill;
     protected Background temple;
     protected int playerXStart;
     protected int playerYStart;
@@ -85,8 +84,9 @@ public class GameState extends BasicState{
 
     protected void handleObjects(TileMap tileMap, List<Enemy> enemies, List<EnemyProjectile> eprojectiles,
                                  List<Explosion> explosions) {
-        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
+
         // update enemies
+        ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
         for (int i = 0; i < enemies.size(); i++) {
             Enemy e = enemies.get(i);
             e.update();
@@ -100,8 +100,8 @@ public class GameState extends BasicState{
             enemies.remove(enemy);
         }
 
-        ArrayList<EnemyProjectile> projectilesToRemove = new ArrayList<>();
         // update enemy projectiles
+        ArrayList<EnemyProjectile> projectilesToRemove = new ArrayList<>();
         for (int i = 0; i < eprojectiles.size(); i++) {
             EnemyProjectile ep = eprojectiles.get(i);
             ep.update();
@@ -114,8 +114,8 @@ public class GameState extends BasicState{
             eprojectiles.remove(enemyProjectile);
         }
 
-        ArrayList<Explosion> explosionsToRemove = new ArrayList<>();
         // update explosions
+        ArrayList<Explosion> explosionsToRemove = new ArrayList<>();
         for (int i = 0; i < explosions.size(); i++) {
             explosions.get(i).update();
             if (explosions.get(i).shouldRemove()) {
@@ -256,16 +256,15 @@ public class GameState extends BasicState{
         }
 
         // move backgrounds
-        if (clouds != null)
-            clouds.setPosition(tileMap.getx(), tileMap.gety());
-        if (mountains != null)
-            mountains.setPosition(tileMap.getx(), tileMap.gety());
-        if (sky != null)
-            sky.setPosition(tileMap.getx(), tileMap.gety());
-        if (perendimi != null)
-            perendimi.setPosition(tileMap.getx(), tileMap.gety());
+        if (cloud != null)
+            cloud.setPosition(tileMap.getx(), tileMap.gety());
+        if (mountain != null)
+            mountain.setPosition(tileMap.getx(), tileMap.gety());
+        if (hill != null)
+            hill.setPosition(tileMap.getx(), tileMap.gety());
         if (temple != null)
             temple.setPosition(tileMap.getx(), tileMap.gety());
+
         // update player
         player.update();
 
@@ -285,14 +284,12 @@ public class GameState extends BasicState{
     @Override
     public void draw(Graphics2D g) {
         // draw background
-        if (sky != null)
-            sky.draw(g);
-        if (clouds != null)
-            clouds.draw(g);
-        if (mountains != null)
-            mountains.draw(g);
-        if (perendimi != null)
-            perendimi.draw(g);
+        if (cloud != null)
+            cloud.draw(g);
+        if (mountain != null)
+            mountain.draw(g);
+        if (hill != null)
+            hill.draw(g);
         if (temple != null)
             temple.draw(g);
 
@@ -375,7 +372,6 @@ public class GameState extends BasicState{
         }
     }
 
-    // player has died
     protected void eventDeadFunc() {
         LoggingHelper.LOGGER.log(Level.INFO, "Event Dead: eventCount = " + eventCount);
         eventCount++;

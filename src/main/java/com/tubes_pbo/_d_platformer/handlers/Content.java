@@ -13,19 +13,10 @@ public final class Content {
     private static final BufferedImage[][] XHELBAT = loadSprites("/Sprites/Enemies/XhelBat.gif", 25, 25);
     private static final BufferedImage[][] RED_ENERGY = loadSprites("/Sprites/Enemies/RedEnergy.gif", 20, 20);
 
-    // Private constructor to prevent instantiation of utility class
     private Content() {
         throw new UnsupportedOperationException("Content is a utility class and cannot be instantiated.");
     }
 
-    /**
-     * Loads a spritesheet and slices it into a 2D array of BufferedImages.
-     *
-     * @param path The path to the spritesheet resource.
-     * @param frameWidth The width of each sprite frame.
-     * @param frameHeight The height of each sprite frame.
-     * @return A 2D array containing the sliced sprites.
-     */
     private static BufferedImage[][] loadSprites(String path, int frameWidth, int frameHeight) {
         try {
             BufferedImage spritesheet = ImageIO.read(Content.class.getResourceAsStream(path));
@@ -46,12 +37,11 @@ public final class Content {
             return sprites;
         } catch (Exception e) {
             LoggingHelper.LOGGER.log(Level.SEVERE, "Failed to load spritesheet: " + path, e);
-            System.exit(1); // Exit application with error code
+            System.exit(1);
         }
         return new BufferedImage[0][0];
     }
 
-    // Getter methods for accessing the loaded sprites
     public static BufferedImage[][] getEnergyParticle() {
         return ENERGY_PARTICLE;
     }

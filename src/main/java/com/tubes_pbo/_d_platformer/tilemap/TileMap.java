@@ -11,88 +11,65 @@ import com.tubes_pbo._d_platformer.main.GamePanel;
 import com.tubes_pbo._d_platformer.handlers.LoggingHelper;
 
 public class TileMap {
-    private double x; // Current x position of the tile map
-    private double y; // Current y position of the tile map
-
-    // Bounds for scrolling limits
+    private double x;
+    private double y;
     private int xmin;
     private int ymin;
     private int xmax;
     private int ymax;
+    private double tween;
+    private int[][] map;
+    private int tileSize;
+    private int numRows;
+    private int numCols;
+    private int width;
+    private int height;
+    private int numTilesAcross;
+    private Tile[][] tiles;
+    private int rowOffset;
+    private int colOffset;
+    private int numRowsToDraw;
+    private int numColsToDraw;
+    private boolean shaking;
+    private int intensity;
 
-    private double tween; // Smoothing factor for transitions
-
-    // Map properties
-    private int[][] map; // 2D array representing the tile map
-    private int tileSize; // Size of each tile in pixels
-    private int numRows; // Number of rows in the map
-    private int numCols; // Number of columns in the map
-    private int width; // Width of the entire map in pixels
-    private int height; // Height of the entire map in pixels
-
-    // TileSet properties
-    private int numTilesAcross; // Number of tiles across in the tileset
-    private Tile[][] tiles; // Array storing tiles based on their type
-
-    // Rendering properties
-    private int rowOffset; // Offset for the rows to render
-    private int colOffset; // Offset for the columns to render
-    private int numRowsToDraw; // Number of rows to render on the screen
-    private int numColsToDraw; // Number of columns to render on the screen
-
-    // Shake effect properties
-    private boolean shaking; // Whether the tile map is shaking
-    private int intensity; // Intensity of the shake effect
-
-    // Constructor initializing the tile map with the given tile size
     public TileMap(int tileSize) {
         this.tileSize = tileSize;
-        numRowsToDraw = GamePanel.HEIGHT / tileSize + 2; // Calculate rows to draw
-        numColsToDraw = GamePanel.WIDTH / tileSize + 2; // Calculate columns to draw
-        tween = 0.07; // Default tweening value
+        numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
+        numColsToDraw = GamePanel.WIDTH / tileSize + 2;
+        tween = 0.07;
     }
 
-    // Load tileset from an image file
     public void loadTiles(String s) {
         try {
-            BufferedImage tileset = ImageIO.read(getClass().getResourceAsStream(s)); // Load tileset image
-            numTilesAcross = tileset.getWidth() / tileSize; // Calculate number of tiles across
-            tiles = new Tile[2][numTilesAcross]; // Initialize tiles array
-
+            BufferedImage tileset = ImageIO.read(getClass().getResourceAsStream(s));
+            numTilesAcross = tileset.getWidth() / tileSize;
+            tiles = new Tile[2][numTilesAcross];
             LoggingHelper.LOGGER.log(Level.SEVERE, "NumTileAcross" + numTilesAcross);
-
-            // Extract tiles from the tileset
             for (int col = 0; col < numTilesAcross; col++) {
                 BufferedImage subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
-                tiles[0][col] = new Tile(subimage, Tile.NORMAL); // Normal tiles
+                tiles[0][col] = new Tile(subimage, Tile.NORMAL);
                 subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
-                tiles[1][col] = new Tile(subimage, Tile.BLOCKED); // Blocked tiles
+                tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
             }
-
         } catch (Exception e) {
             LoggingHelper.LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
-    // Load the map layout from a file
     public void loadMap(String s) {
         try {
             InputStream in = getClass().getResourceAsStream(s);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-            numCols = Integer.parseInt(br.readLine()); // Read number of columns
-            numRows = Integer.parseInt(br.readLine()); // Read number of rows
-            map = new int[numRows][numCols]; // Initialize map array
-            width = numCols * tileSize; // Calculate map width
-            height = numRows * tileSize; // Calculate map height
-
-            // Set scrolling bounds
+            numCols = Integer.parseInt(br.readLine());
+            numRows = Integer.parseInt(br.readLine());
+            map = new int[numRows][numCols];
+            width = numCols * tileSize;
+            height = numRows * tileSize;
             xmin = GamePanel.WIDTH - width;
             xmax = 0;
             ymin = GamePanel.HEIGHT - height;
             ymax = 0;
-
-            // Parse the map layout
             String delims = "\\s+";
             for (int row = 0; row < numRows; row++) {
                 String line = br.readLine();
@@ -101,7 +78,6 @@ public class TileMap {
                     map[row][col] = Integer.parseInt(tokens[col]);
                 }
             }
-
         } catch (Exception e) {
             LoggingHelper.LOGGER.log(Level.SEVERE, e.getMessage());
         }
@@ -135,11 +111,10 @@ public class TileMap {
         return numCols;
     }
 
-    // Get the type of a specific tile
     public int getType(int row, int col) {
         int rc = map[row][col];
-        int r = rc / numTilesAcross; // Row index in the tiles array
-        int c = rc % numTilesAcross; // Column index in the tiles array
+        int r = rc / numTilesAcross;
+        int c = rc % numTilesAcross;
         return tiles[r][c].getType();
     }
 
@@ -166,14 +141,11 @@ public class TileMap {
     public void setPosition(double x, double y) {
         this.x += (x - this.x) * tween;
         this.y += (y - this.y) * tween;
-
         fixBounds();
-
         colOffset = (int) -this.x / tileSize;
         rowOffset = (int) -this.y / tileSize;
     }
 
-    // Adjust the map position to stay within bounds
     public void fixBounds() {
         if (x < xmin) x = xmin;
         if (y < ymin) y = ymin;
@@ -181,7 +153,6 @@ public class TileMap {
         if (y > ymax) y = ymax;
     }
 
-    // Update the map position (e.g., for shaking effect)
     public void update() {
         if (shaking) {
             this.x += Math.random() * intensity - intensity / 2.0;
@@ -189,17 +160,15 @@ public class TileMap {
         }
     }
 
-    // Draw the visible part of the map
     public void draw(Graphics2D g) {
         for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
             if (row >= numRows) break;
-
             for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
                 if (col >= numCols) break;
                 if (map[row][col] != 0) {
                     int rc = map[row][col];
-                    int r = rc / numTilesAcross; // Row index in tiles array
-                    int c = rc % numTilesAcross; // Column index in tiles array
+                    int r = rc / numTilesAcross;
+                    int c = rc % numTilesAcross;
                     g.drawImage(tiles[r][c].getImage(), (int) x + col * tileSize, (int) y + row * tileSize, null);
                 }
             }

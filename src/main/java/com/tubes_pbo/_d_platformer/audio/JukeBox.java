@@ -77,10 +77,6 @@ public class JukeBox {
         clips.get(s).loop(Clip.LOOP_CONTINUOUSLY);
     }
 
-    public static void setPosition(String s, int frame) {
-        clips.get(s).setFramePosition(frame);
-    }
-
     public static int getFrames(String s) {
         return clips.get(s).getFrameLength();
     }

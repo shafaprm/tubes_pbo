@@ -13,7 +13,7 @@ public class Animation {
     private int playCount;
 
     public Animation() {
-        resetPlayCount();
+playCount = 0;
     }
 
     public void setFrames(BufferedImage[] frames) {
@@ -26,10 +26,6 @@ public class Animation {
     private void resetAnimationState() {
         currentFrame = 0;
         frameCount = 0;
-        resetPlayCount();
-    }
-
-    private void resetPlayCount() {
         playCount = 0;
     }
 
@@ -42,53 +38,29 @@ public class Animation {
     }
 
     public void update() {
-        if (isDelayDisabled()) {
+        if (frameDelay == -1) {
             return;
         }
 
         frameCount++;
 
-        if (shouldAdvanceFrame()) {
+        if (frameCount >= frameDelay) {
             advanceFrame();
         }
-    }
-
-    private boolean isDelayDisabled() {
-        return frameDelay == -1;
-    }
-
-    private boolean shouldAdvanceFrame() {
-        return frameCount >= frameDelay;
     }
 
     private void advanceFrame() {
         currentFrame++;
         frameCount = 0;
 
-        if (isLastFrame()) {
-            resetToFirstFrame();
-            incrementPlayCount();
+        if (currentFrame >= numFrames) {
+            currentFrame = 0;
+            playCount++;
         }
-    }
-
-    private boolean isLastFrame() {
-        return currentFrame >= numFrames;
-    }
-
-    private void resetToFirstFrame() {
-        currentFrame = 0;
-    }
-
-    private void incrementPlayCount() {
-        playCount++;
     }
 
     public int getFrame() {
         return currentFrame;
-    }
-
-    public void setFrame(int frame) {
-        currentFrame = frame;
     }
 
     public int getCount() {
