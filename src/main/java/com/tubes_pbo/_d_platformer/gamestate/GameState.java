@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import com.tubes_pbo._d_platformer.audio.JukeBox;
 import com.tubes_pbo._d_platformer.model.Enemy;
 import com.tubes_pbo._d_platformer.model.Enemy.EnemyType;
-import com.tubes_pbo._d_platformer.model.EnemyProjectile;
 import com.tubes_pbo._d_platformer.model.EnergyParticle;
 import com.tubes_pbo._d_platformer.model.Explosion;
 import com.tubes_pbo._d_platformer.model.HUD;
@@ -34,7 +33,6 @@ import com.tubes_pbo._d_platformer.main.GamePanel;
 public class GameState extends BasicState{
     private static final String TELEPORT_MUSIC_NAME = "teleport";
     protected ArrayList<Enemy> enemies;
-    protected ArrayList<EnemyProjectile> eprojectiles;
     protected ArrayList<Explosion> explosions;
     protected HUD hud;
     protected BufferedImage SunnyLandStart;
@@ -82,8 +80,7 @@ public class GameState extends BasicState{
             player.setCharging();
     }
 
-    protected void handleObjects(TileMap tileMap, List<Enemy> enemies, List<EnemyProjectile> eprojectiles,
-                                 List<Explosion> explosions) {
+    protected void handleObjects(TileMap tileMap, List<Enemy> enemies, List<Explosion> explosions) {
 
         // update enemies
         ArrayList<Enemy> enemiesToRemove = new ArrayList<>();
@@ -98,20 +95,6 @@ public class GameState extends BasicState{
 
         for (Enemy enemy : enemiesToRemove) {
             enemies.remove(enemy);
-        }
-
-        // update enemy projectiles
-        ArrayList<EnemyProjectile> projectilesToRemove = new ArrayList<>();
-        for (int i = 0; i < eprojectiles.size(); i++) {
-            EnemyProjectile ep = eprojectiles.get(i);
-            ep.update();
-            if (ep.shouldRemove()) {
-                projectilesToRemove.add(ep);
-            }
-        }
-
-        for (EnemyProjectile enemyProjectile : projectilesToRemove) {
-            eprojectiles.remove(enemyProjectile);
         }
 
         // update explosions
@@ -151,7 +134,6 @@ public class GameState extends BasicState{
 
         // enemies
         enemies = new ArrayList<>();
-        eprojectiles = new ArrayList<>();
 
         // energy particle
         ArrayList<EnergyParticle> energyParticles;
@@ -273,7 +255,7 @@ public class GameState extends BasicState{
         tileMap.update();
         tileMap.fixBounds();
 
-        handleObjects(tileMap, enemies, eprojectiles, explosions);
+        handleObjects(tileMap, enemies, explosions);
 
         // update teleport
         if (teleport != null)
@@ -299,11 +281,6 @@ public class GameState extends BasicState{
         // draw enemies
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).draw(g);
-        }
-
-        // draw enemy projectiles
-        for (int i = 0; i < eprojectiles.size(); i++) {
-            eprojectiles.get(i).draw(g);
         }
 
         // draw explosions
