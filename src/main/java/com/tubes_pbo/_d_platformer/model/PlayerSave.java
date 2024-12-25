@@ -6,7 +6,7 @@ public class PlayerSave {
     private static long time = 0;
 
     public PlayerSave() {
-        // throw new IllegalStateException("Utility Class");
+         throw new IllegalStateException("Utility Class");
     }
 
     public static void init() {

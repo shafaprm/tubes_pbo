@@ -18,9 +18,8 @@ public class Keys {
     public static boolean[] prevKeyState = new boolean[NUM_KEYS];
 
     public Keys() {
-        // throw new IllegalStateException("Utility Class");
+         throw new IllegalStateException("Utility Class");
     }
-
 
     public static void keySet(int i, boolean b) {
         if (i == KeyEvent.VK_UP)

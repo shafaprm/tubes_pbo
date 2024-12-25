@@ -24,15 +24,12 @@ public class MenuState extends BasicState{
 
     @Override
     protected void select() {
-        switch (currentChoice) {
-            case 0:
-                JukeBox.play("menuselect");
-                PlayerSave.init();
-                gsm.setState(GameStateManager.LEVEL1STATE); // start this level entrance
-                break;
-            default:
-                System.exit(0);
-                break;
+        if(currentChoice == 0) {
+            JukeBox.play("menuselect");
+            PlayerSave.init();
+            gsm.setState(GameStateManager.LEVEL1STATE);
+        }else{
+            System.exit(0);
         }
     }
 }
