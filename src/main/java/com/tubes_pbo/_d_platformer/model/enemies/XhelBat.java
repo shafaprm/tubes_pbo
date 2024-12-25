@@ -13,6 +13,7 @@ public class XhelBat extends Flyer {
     private final Player player;
     private boolean active;
 
+    //
     public XhelBat(TileMap tm, Player player) {
         super(tm, FlyerType.XHEL_BAT);
 
